@@ -5,15 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="credentials.css">
-    <title>Document</title>
+    <title>Sign up</title>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+
 </head>
 <body>
-    <form class="box" action="index.html" method="POST">
+    <form id="signup-form" class="box" action="index.html" method="POST">
         <h1>Login</h1>
-        <input class="username" type="text" name ='' placeholder="Username">
-        <input class='password' type="password" name ='' placeholder="Password">
-        <input class='user-balance' type="number" placeholder="enter acount balance">
-        <input class="submit" type="submit" value="Login">
+        <input class="username" type="email" name ='' id="signup-email" placeholder="Email address">
+        <input class='password' type="password" name ='' id="signup-password" placeholder="Password">
+        <!-- <input class='user-balance' type="number" placeholder="enter acount balance"> -->
+        <input class="submit" type="submit" value="Sign up">
     </form>
+
+    <script src="auth.js"></script>
 </body>
 </html>
