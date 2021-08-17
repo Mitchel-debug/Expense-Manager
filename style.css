@@ -358,3 +358,10 @@ input[type='number'] {
   display: flex;
   justify-content: space-between;
 }
+
+#signup-form{
+  display: block;
+}
+main{
+  display: none;
+}
