@@ -1,13 +1,13 @@
 // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 var firebaseConfig = {
-    apiKey: "AIzaSyBK2kRr4DD92wFmay9FNhfekXZewz_ZS8c",
-    authDomain: "expense-tracker2-9aa1a.firebaseapp.com",
-    projectId: "expense-tracker2-9aa1a",
-    storageBucket: "expense-tracker2-9aa1a.appspot.com",
-    messagingSenderId: "576396074226",
-    appId: "1:576396074226:web:c967343827990cf6d6446b",
-    measurementId: "G-980W75KEEE"
+    apiKey: "AIzaSyBu3o88ZXsrroHmf1PiFeWMSHhY9jo90oQ",
+    authDomain: "expense-tracker-a7264.firebaseapp.com",
+    projectId: "expense-tracker-a7264",
+    storageBucket: "expense-tracker-a7264.appspot.com",
+    messagingSenderId: "672380797363",
+    appId: "1:672380797363:web:66d7ea25168cfe38d38bc6",
+    measurementId: "G-1CEQ7SZ8KQ"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -22,65 +22,8 @@ buttonref.addEventListener("click", updateDB);
 
 let history = document.querySelector(".history");
 const db = firebase.database().ref();
-
 const auth = firebase.auth();
-
-//signup
-if(document.getElementsByClassName("submit").onclick == true){
-    document.getElementsByTagName("main").style.display = "block"
-    document.querySelector("signup-form").style.display = "none";
-    console.log(uid);
-}
-else{
-    document.querySelector("main").style.display = "none"
-    document.querySelector("#signup-form").style.display = "block";
-}
-function register(){
-    const signupForm = document.querySelector("#signup-form");
-    signupForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        //Get user info
-        const email = signupForm["signup-email"].value;
-        const password = signupForm["signup-password"].value;
-
-        //Signup the user
-        auth.createUserWithEmailAndPassword(email, password).then(cred => {
-            console.log(cred.user);
-
-        })
-
-
-    })
-}
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      var uid = user.uid;
-      document.querySelector("main").style.display = "block"
-      document.querySelector("#signup-form").style.display = "none";
-      // ...
-
-
-    } else {
-      // User is signed out
-      // ...
-      document.querySelector("main").style.display = "none"
-      document.querySelector("#signup-form").style.display = "block";
-    }
-});
-
-function login(){
-    const userEmail = document.getElementById("signup-email").value;
-    const userPass = document.getElementById("signup-password").value;
-
-    auth.signInWithEmailAndPassword(userEmail, userPass).catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            window.alert("Error: " + errorMessage);
-        });
-}
+var currentUser = {}
 
 
 function createPost(text, categorical, amount){
@@ -118,9 +61,7 @@ function createPost(text, categorical, amount){
     }
     history.insertBefore(div, history.firstChild);
 
-    // for(i = 0; i < 1; i++){
-    //     console.log(history);
-    // }
+
 }
 
 function deletePosts() {
@@ -129,18 +70,37 @@ function deletePosts() {
     })
 }
 
-function getPosts(){
-    db.on("child_added", function(rowData){
-        let row = rowData.val();
-        createPost(
-            row.Text,
-            row.Categories,
-            row.Amount
-        );
-    })
-}
+// function getPosts(){
+//     db.on("child_added", function(rowData){
+//         let row = rowData.val();
+//         console.log(row)
+//         createPost(
+//             row.Text,
+//             row.Categories,
+//             row.Amount
+//         );
+//     })
+// }
 
-getPosts();
+// getPosts();
+// let userId;
+
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      var uid = user.uid;
+      var email = user.email;
+      currentUser = user;
+      writeUserData(user)
+      // ...
+    } else {
+      // User is signed out
+      // ...
+    }
+});
+
+
 function updateDB(e){
     e.preventDefault();
     const text = textElement.value;
@@ -151,15 +111,20 @@ function updateDB(e){
     amountElem.value = '';
 
     let value = {
+        userId: currentUser.uid,
         Text: text,
         Amount: amount,
         Categories: categ
     }
-
-    db.push(value);
+    firebase.database().ref("heroes/" + value.userId).set(value)
+    firebase.database().ref("users/" + currentUser.uid + /heroes/ + value.userId).set(value)
+    createPost(value.Text, value.Categories, value.Amount);
 }
 
-
+$("#logout").click(function(){
+    auth.signOut();
+    console.log("logged out")
+})
 
 const date = new Date();
 let month = date.getMonth() + 1;
