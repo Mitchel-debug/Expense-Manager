@@ -1,14 +1,19 @@
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="credentials.css">
-    <title>Sign up</title>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>Expense Tracker</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
@@ -16,17 +21,113 @@
 
 </head>
 <body>
-    <form id="signup-form" class="box" action="index.html" method="POST">
-        <h1>Login</h1>
-        <input class="username" type="email" name ='' id="signup-email" placeholder="Email address">
-        <input class='password' type="password" name ='' id="signup-password" placeholder="Password">
-        <!-- <input class='user-balance' type="number" placeholder="enter acount balance"> -->
-        <input class="submit" type="button" value="Sign up">
-        <button type="button" id="login">Sign In</button>
-        <button type="button" id="logout">Log Out</button>
-    </form>
+    <!-- Button trigger modal -->
+    <div id="editData" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Income</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="number" name="income" id="incomeInput" placeholder="Enter Income">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary changeIncome" >Add Income</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+    <nav>
+        <div class="nav-field">
+            <ul class = "nav-list-items">
+                <li><a href="">Expense Tracker</a></li>
+                <li><a href="recommendations.html">Recommendations</a></li>
+                <li><a href="">Categories</a></li>
+                <li><a href="calendar.html">Visualize Your Expenses</a></li>
+                <button type="button" id="logout">Log Out</button>
+            </ul>
+        </div>
+    </nav>
 
-    <script src="auth.js"></script>
-</body>
+    <h2>Expense Tracker</h2>
+
+    <div class="container">
+    <h4>Your Balance</h4>
+    <!-- Change the h1 below to h5-->
+    <h1 id="balance">$0.00</h1>
+    <button style="width: 20%;"type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editData" id="edit">
+        Add income
+    </button>
+
+    <div class="inc-exp-container">
+        <div>
+        <h4>Income</h4>
+        <p id="money-plus" class="money plus">+$0.00</p>
+        </div>
+        <div>
+        <h4>Expense</h4>
+        <p id="money-minus" class="money minus">-$0.00</p>
+        </div>
+    </div>
+
+    <h3>History</h3>
+    <div class="history">
+        
+    </div>
+    <ul id="list" class="list">
+        <!-- <li class="minus">
+        Cash <span>-$400</span><button class="delete-btn">x</button>
+        </li> -->
+    </ul>
+
+    <h3>Add new transaction</h3>
+    <form id="form">
+        <div class="form-control">
+        <label for="text">Text</label>
+        <input type="text" id="text" placeholder="Enter text..." />
+        </div>
+        <div class="form-control">
+        <label for="amount"
+            >Amount <br />
+            (negative - expense, positive - income)</label
+        >
+        <input type="number" id="amount" placeholder="Enter amount..." />
+        </div>
+        <div class="form-control">
+            <label for="category">Category</label>
+            <select class="dropdown" name="Category" aria-placeholder="category" id="category">
+                <option value="Bills">Bills</option>
+                <option value="Check">Check</option>
+                <option value="Check">Check</option>
+                <option value="Check">Check</option>
+                <option value="Check">Check</option>
+                <option value="Check">Check</option>
+                <option value="Check">Check</option>
+            </select>
+        </div>
+        <button class="btn upbtn">Add transaction</button>
+    </form>
+    </div>
+
+    <div class="rec-container">
+        <h2>Get Recommendations</h2>
+        <p>We will provide you will custom recommendations for the transactions that you made today</p>
+        <button class="btn btn-rec">Get Recommended</button>
+    </div>
+
+    <div class="plan">
+        <div class="card">
+            <header class = "card__header">
+                <h3 class = "plan__name">recommendation</h3>
+                <p class="date">date created: 1/10/21</p>
+                <p class="plan__description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem excepturi, asperiores nemo, eveniet aliquam doloremque aut repellat debitis voluptates eum eaque earum in, nihil porro iure rem sint sunt maxime!</p>
+            </header>
+        </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>
 
