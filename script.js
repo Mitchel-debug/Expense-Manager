@@ -17,40 +17,69 @@ firebase.analytics();
 const textElement = document.querySelector("#text")
 const amountElem = document.querySelector("#amount")
 const category2 = document.getElementById("category");
-const buttonref = document.querySelector("#button");
+const buttonref = document.querySelector(".upbtn");
 buttonref.addEventListener("click", updateDB);
 
 let history = document.querySelector(".history");
 const db = firebase.database().ref();
 const auth = firebase.auth();
 var currentUser = {}
+let delete_button;
+var div;
 
+// buttonref.setAttribute("id", currentUser.uid)
+function createPost(text, categorical, amount, id){
+    div = document.createElement("div")
+    div.setAttribute("id", "transaction");
 
-function createPost(text, categorical, amount){
-    let div = document.createElement("div")
-    div.setAttribute("class", "transaction");
     let p = document.createElement("p");
     p.setAttribute("id", "p1");
+    p.setAttribute("class", "ptag");
     let p2 = document.createElement("p");
     p2.setAttribute("id", "p2");
+    p2.setAttribute("class", "ptag");
     let p3 = document.createElement("p");
     p3.setAttribute("id", "p3");
-    let delete_button = document.createElement('button')
-    delete_button.setAttribute('class', 'delete-btn') 
+    p3.setAttribute("class", "ptag");
+    let but = document.createElement("input")
+    but.type = "hidden";
+
+    delete_button = document.createElement('button')
+    delete_button.setAttribute('class', 'delete-btn') ;
+    delete_button.setAttribute('id', id) ;
     delete_button.innerHTML = 'x'
 
     if (amount > 0) {
         div.className += ' transaction--plus';
+        let balanceTag = document.querySelector("#balance");
+        // stringer = moneyPlus.innerHTML;
+        // search = "$";
+        // const indexOfFirst = stringer.indexOf(search);
+        let currBalance = balanceTag.innerHTML.substring(1);
+        let currBalance2 = parseInt(currBalance, 10);
+        let am = parseInt(amount, 10); 
+        let newBalance = currBalance2 + am;
+        // let newUserBal = {
+        //     userBalance: newBalance
+        // }
+        balanceTag.innerHTML = "$" + newBalance
     }
     else {
         div.className += ' transaction--minus';
+            let balanceTag = document.querySelector("#balance");
+            let currBalance = balanceTag.innerHTML.substring(1);
+            currBalance = parseInt(currBalance, 10);
+            amount = parseInt(amount, 10);
+            newBalance = currBalance + amount;
+            console.log(newBalance)
+            balanceTag.innerHTML = "$" + newBalance;
     }
 
 
     p.textContent = text;
     p2.textContent = "Category: " + categorical;
     p3.textContent = amount;
-    
+    but = id;
     div.appendChild(delete_button)
     div.appendChild(p);
     div.appendChild(p2);
@@ -60,30 +89,44 @@ function createPost(text, categorical, amount){
         console.log(true);
     }
     history.insertBefore(div, history.firstChild);
-
+    // history.appendChild(div);
 
 }
 
-function deletePosts() {
-    delete_button.addEventListener('click', function() {
-        //I added this last night. this is where your would delete transactions and i wanted to make it for you early so here you go.
-    })
-}
+const transact = document.querySelector("#transaction")
+// starCountRef.on('value', (snapshot) => {
+//   const data = snapshot.val();
+var condition = firebase.database().ref("heroes/");
+condition.on('child_added', (snapshot) => {
+    const datas = snapshot.val();
+    console.log(datas);
+    if(datas.userId == currentUser.uid){
+        createPost(datas.Text, datas.Categories, datas.Amount, datas.id);
+        
+    }
+    else{
+        console.log("Idk");
+    }
+})
 
-// function getPosts(){
-//     db.on("child_added", function(rowData){
-//         let row = rowData.val();
-//         console.log(row)
-//         createPost(
-//             row.Text,
-//             row.Categories,
-//             row.Amount
-//         );
-//     })
+$(document).on("click", ".delete-btn", function(){
+    console.log("clicked")
+    var heroID = $(this).attr("id")
+    console.log(heroID);
+    firebase.database().ref("users/" + currentUser.uid + /heroes/ + heroID).remove()
+    firebase.database().ref("heroes/" + heroID).remove()
+    var dell = $(this).parent("div")
+    dell.remove()
+    // window.onload = function(){
+    //     transact.remove()
+    // }
+})
+
+// let del = document.querySelector(".delete-btn")
+// del.onclick = function(){
+//     transact.remove();
 // }
 
-// getPosts();
-// let userId;
 
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -93,6 +136,14 @@ firebase.auth().onAuthStateChanged((user) => {
       var email = user.email;
       currentUser = user;
       writeUserData(user)
+      console.log("Hello, user is signed in")
+
+
+//       var condition = firebase.database().ref('users/' + currentUser.uid + /heroes/ + value.userId);
+//       condition.on('value', (snapshot) => {
+//       const data = snapshot.val();
+//       console.log(data)
+// });
       // ...
     } else {
       // User is signed out
@@ -100,6 +151,11 @@ firebase.auth().onAuthStateChanged((user) => {
     }
 });
 
+// $( document ).ready(function() {
+//     console.log( "testing.." );
+//     var user = firebase.auth().currentUser;
+//     console.log(user);
+// });
 
 function updateDB(e){
     e.preventDefault();
@@ -109,20 +165,81 @@ function updateDB(e){
 
     textElement.value = ""
     amountElem.value = '';
+    var userIdent = currentUser.uid;
 
     let value = {
+        id: text + Date.now(),
         userId: currentUser.uid,
+        userEmail: currentUser.email,
         Text: text,
         Amount: amount,
         Categories: categ
     }
-    firebase.database().ref("heroes/" + value.userId).set(value)
-    firebase.database().ref("users/" + currentUser.uid + /heroes/ + value.userId).set(value)
-    createPost(value.Text, value.Categories, value.Amount);
+    firebase.database().ref("heroes/" + value.id).update(value)
+    firebase.database().ref("users/" + currentUser.uid + /heroes/ + value.id).update(value)
+
+
+    // createPost(value.Text, value.Categories, value.Amount);
+
+    // console.log("$" + value.Amount)
+    // const balance = document.getElementById("balance");
+    // balance.innerHTML = "$" + value.Amount;
 }
 
-$("#logout").click(function(){
-    auth.signOut();
+const incomeInput = document.getElementById("incomeInput");
+$(document).on("click", ".changeIncome", function(){
+    // var dataname = $(this).attr("id", currentUser.uid)
+    incomeInput.setAttribute("id", currentUser.uid)
+    console.log("edit is clicked");
+    const user = incomeInput.id
+    // console.log(currentUser.uid)
+
+    const income2 = incomeInput.value;
+    incomeInput.value = ""
+    let income = {
+        userIncome: income2
+    }
+    const balance = document.getElementById("balance");
+    balance.innerHTML = "$" +  income2;  
+    incomeDiv.innerHTML = "$" + income.userIncome;
+
+    //Change this to heroes + user
+    firebase.database().ref("heroes/").update(income);
+    firebase.database().ref("users/" + currentUser.uid + /heroes/).update(income);
+
+
+})
+
+incomeDiv = document.getElementById("money-plus")
+
+// var addIncome = firebase.database().ref('heroes/');
+// addIncome.on('value', (snapshot) => {
+//   const data = snapshot.val();
+//   data.key = snapshot.key;
+//   console.log(data);
+//   incomeDiv.innerHTML = "$" + data.userIncome;
+// });
+
+// var makeIncome = firebase.database().ref().child("heroes");
+// //might wanna change this to value
+// makeIncome.on('value', function (snapshot){
+//     snapshot.forEach(function(childsnapshot){
+//         var item = childsnapshot.val();
+//         item.key = childsnapshot.key;
+//         console.log(item.userIncome)
+//         // console.log(item.key)
+//     })
+// //   const data = snapshot.val();
+
+// });
+
+$(document).on("click", "#logout", function(){
+    auth.signOut().then(cred => {
+        firebase.database().ref("heroes").update({
+            userIncome: 0.00
+        })
+        window.location.href = "index.html";
+    });
     console.log("logged out")
 })
 
@@ -130,7 +247,8 @@ const date = new Date();
 let month = date.getMonth() + 1;
 let day = date.getDay() + 15;
 let year = date.getFullYear();
-document.querySelector(".date").innerHTML = "date created: " + month + "/" + day + '/' + year;
+let current_date = "date created: " + month + "/" + day + '/' + year;
+document.querySelector(".date").innerHTML = current_date
 
 let button = document.querySelector('.btn-rec');
 
@@ -144,17 +262,18 @@ button.addEventListener('click', function() {
     h3 = document.createElement('h3');
     h3.className = 'plan__name';
     h3.innerHTML = 'newRecommendation';
-    // date = document.createElement('p');
-    // date.className = 'date'
-    // date.innerHTML = "date created: " + month + "/" + day + '/' + year;
+    rec_date = document.createElement('p');
+    rec_date.className = 'date'
+    rec_date.innerHTML = current_date
     description = document.createElement('p');
     description.className = 'plan__description';
+    description.innerHTML = "this is placeholder text for when we can dynamically add the user's recommendation data "
 
-    header.appendChild(description)
-    //header.appendChild(date)
-    header.appendChild(h3);
-    card.appendChild(header);
     plan.appendChild(card);
+    card.appendChild(header);
+    header.appendChild(h3);
+    header.appendChild(rec_date)
+    header.appendChild(description)
 
     body = document.querySelector('body');
 
