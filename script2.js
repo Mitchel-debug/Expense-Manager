@@ -57,9 +57,9 @@ const renderCalendar = () => {
       i === new Date().getDate() &&
       date.getMonth() === new Date().getMonth()
     ) {
-      days += `<div class="today">${i}</div>`;
+      days += `<div data-modal-target="#modal" class="today">${i}</div>`;
     } else {
-      days += `<div class="day">${i}</div>`;
+      days += `<div data-modal-target="#modal" class="day">${i}</div>`;
     }
   }
 
@@ -83,6 +83,8 @@ document.querySelector(".next").addEventListener("click", () => {
   renderCalendar();
 });
 
+renderCalendar();
+
 // document.querySelectorAll('.days').addEventListener('click', () => {
 //   days.array.forEach(element => {
     
@@ -96,9 +98,9 @@ const calender_days = document.querySelectorAll('.days');
 const closeModalButtons = document.querySelectorAll('[data-close-button]')
 const overlay = document.getElementById('overlay')
 
-calender_days.forEach(day => {
-  day.addEventListener('click', () => {
-    const modal = document.querySelector(day.dataset.modalTarget)
+calender_days.forEach(div => {
+  div.addEventListener('click', () => {
+    const modal = document.querySelector('.modal')
     openModal(modal)
   })
 })
@@ -129,5 +131,10 @@ function closeModal(modal) {
   modal.classList.remove('active')
   overlay.classList.remove('active')
 }
-renderCalendar();
 
+const loginButton = document.querySelector('submit')
+loginButton.addEventListener('click', () => {
+  window.location.replace('index.html')
+})
+
+renderCalendar();
