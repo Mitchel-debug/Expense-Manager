@@ -71,8 +71,18 @@ function createPost(text, categorical, amount, id){
             currBalance = parseInt(currBalance, 10);
             amount = parseInt(amount, 10);
             newBalance = currBalance + amount;
-            console.log(newBalance)
             balanceTag.innerHTML = "$" + newBalance;
+            money = document.getElementById("money-minus")
+            moneyMinus = $('#money-minus').text();
+            const searchTerm = '$';
+            const indexOfFirst = moneyMinus.indexOf(searchTerm);
+
+            let currMoney = moneyMinus.substring(indexOfFirst + 1)
+            console.log(currMoney);
+            let currBal = parseInt(currMoney, 10);
+            amo = parseInt(amount, 10);
+            let amon = currBal + amo
+            money.innerHTML = amon;
     }
 
 
@@ -267,7 +277,7 @@ button.addEventListener('click', function() {
     rec_date.innerHTML = current_date
     description = document.createElement('p');
     description.className = 'plan__description';
-    description.innerHTML = "this is placeholder text for when we can dynamically add the user's recommendation data "
+    description.innerHTML = "Your expenses are going great, you're on the right path!";
 
     plan.appendChild(card);
     card.appendChild(header);
