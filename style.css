@@ -34,7 +34,7 @@ body {
     margin: 5rem
 }
 
-.transaction {
+#transaction {
   display: flex;
   justify-content: space-between;
   font-family: 'Lato', sans-serif;
@@ -44,24 +44,27 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
-/* .transaction:hover {
+
+
+
+/* #transaction:hover {
   border-left: 70px solid #c0392b;
   transition: .2s ease-out;
 } */
 
-.transaction:first-child {
+#transaction:first-child {
   margin-top: 25px;
 }
 
-.transaction--plus {
+#transaction--plus {
   border-right: 5px solid #2ecc71;
 }
 
-.transaction--minus {
+#transaction--minus {
   border-right: 5px solid #c0392b;
 }
 
-.transaction > p {
+#transaction > p {
   font-size: 25px;
 
 }
@@ -86,6 +89,9 @@ h4 {
   text-transform: uppercase;
 }
 
+#edit{
+  color: #333;;
+}
 p {
     font-size: 20px;
 }
@@ -230,7 +236,7 @@ input[type='number'] {
   transition: opacity 0.3s ease;
 }
 
-.transaction:hover .delete-btn {
+#transaction:hover .delete-btn {
   opacity: 1;
 }
 
@@ -334,30 +340,24 @@ input[type='number'] {
     }
   }
 
-
-/* #history-1{
-  display: flex;
-  justify-content: space-between;
-
-} */
-
 .history div{
   display: none;
 }
 
-.history div:first-child{
+.history:first-child{
   display: flex;
   justify-content: space-between;
 }
 
-.history div:nth-child(2){
+.history:nth-child(2){
   display: flex;
   justify-content: space-between;
 }
-.history div:nth-child(3){
+.history:nth-child(3){
   display: flex;
   justify-content: space-between;
 }
+
 
 #signup-form{
   display: block;
